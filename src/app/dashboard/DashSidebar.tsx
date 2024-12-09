@@ -25,7 +25,6 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 import { useRouter } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import ComboButton from "@/components/ComboButton";
 
 export default function DashSidebar (): ReactElement {
   const [user, setUser] = useState<Users>();

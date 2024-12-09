@@ -103,7 +103,7 @@ const add: Address[] = [
         streetId: "street6"
     }
 ];
-export const columns: ColumnDef<Address>[] = [
+ const columns: ColumnDef<Address>[] = [
     {
         accessorKey: "id",
         header: "Id",
@@ -199,7 +199,7 @@ interface DataTableProps<TData, TValue> {
     data: TData[]
 }
 
-export function DataTable<TData, TValue> ({
+ function DataTable<TData, TValue> ({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
