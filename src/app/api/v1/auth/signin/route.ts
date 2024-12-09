@@ -9,6 +9,10 @@ export async function POST (req: Request): Promise<Response> {
     if (error) return new Response(JSON.stringify(error));
 
     return new Response(JSON.stringify({
-        access_token: data.session?.access_token,
+        accessToken: data.session?.access_token,
+        refreshToken:data.session?.refresh_token,
+        expiresAt: data.session?.expires_at,
+        expiresIn: data.session?.expires_in,
     }))
 }
+

@@ -4,6 +4,7 @@ import "./globals.css";
 import { ReactElement } from "react";
 import { NextFontWithVariable } from "next/dist/compiled/@next/font";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const robotoLight:NextFontWithVariable = localFont({
   src: "./fonts/Roboto-Light.ttf",
@@ -26,8 +27,15 @@ export default function RootLayout({
       <body
         className={`${robotoLight.variable} antialiased w-[100vw] h-[100vh]`}
       >
+         <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
         {children}
         <Toaster />
+          </ThemeProvider>
       </body>
     </html>
   );
