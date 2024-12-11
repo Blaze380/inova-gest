@@ -32,7 +32,6 @@ import { useRouter } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { getUserData } from "./actions";
-import { baseUrl } from "@/lib/utils";
 
 export default function DashSidebar (): ReactElement {
   const [user, setUser] = useState<Users>();

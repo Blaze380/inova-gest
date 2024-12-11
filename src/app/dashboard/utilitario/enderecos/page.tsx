@@ -3,7 +3,6 @@ import LabeledTitle from "@/components/LabeledTitle";
 import { ReactElement } from "react";
 import DataTable from "@/components/DataTable";
 import { columns, add } from "./ultils";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export default function Addresses (): ReactElement {
   return (

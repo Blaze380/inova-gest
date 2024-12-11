@@ -1,12 +1,8 @@
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { Address } from "@/types/entities";
-import { Button } from "@/components/ui/button";
 import {
     ColumnDef,
 } from "@tanstack/react-table"
-import { ReactNode } from "react";
-import { getActionsColumns, getSelectionCheckbox, TableActions, TableColumnSort } from "@/components/DataTable";
-import { Checkbox } from "@/components/ui/checkbox";
+import { getActionsColumns, getSelectionCheckbox,  TableColumnSort } from "@/components/DataTable";
 
 export const add: Address[] = [
     {

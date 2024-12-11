@@ -230,7 +230,7 @@ function CurrentTableCombobox (): ReactElement {
                         key={table}
                         className="capitalize"
                         checked={table === currentTable}
-                        onCheckedChange={(a) => setCurrentTable(table)}>
+                        onCheckedChange={() => setCurrentTable(table)}>
                         {table}
                     </DropdownMenuCheckboxItem>
                 ))}
@@ -294,6 +294,7 @@ interface DataDialogProps {
 interface InputDialog {
     name: string;
     inputType: InputHTMLAttributes<HTMLInputElement>["type"] | "select";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     defaultValue?: any;
 }
 function DataDialog ({ isEdit, data }: DataDialogProps): ReactElement {
@@ -307,6 +308,7 @@ function DataDialog ({ isEdit, data }: DataDialogProps): ReactElement {
     );
 
     // Função para atualizar o valor do input
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function handleChange (i: number, j: number, value: any): void {
         const updatedData = [...formData];
         updatedData[i][j] = value;
@@ -323,10 +325,10 @@ function DataDialog ({ isEdit, data }: DataDialogProps): ReactElement {
             </DialogHeader>
             <ScrollArea className="h-96 flex flex-col m-0  p-4">
                 {data.map((row: InputDialog[], i: number): ReactElement => (
-                    <div className="flex justify-between my-4 w-full">
+                    <div className="flex justify-between my-4 w-full" key={i}>
                         {
                             row.map((input: InputDialog, j: number): ReactElement => (
-                                <div className="flex  flex-col items-start space-y-2 w-[47%]">
+                                <div className="flex  flex-col items-start space-y-2 w-[47%]" key={j}>
                                     <Label htmlFor="name" className="text-right">
                                         {input.name}
                                     </Label>
@@ -451,12 +453,7 @@ export function TableColumnSort<T> ({ column, columnName }: TableColumnSortProps
     )
 }
 
-interface ReturnTypeS<T> {
-    header: ({ table }: HeaderContext<T, unknown>) => ReactElement;
-    cell: ({ row }: CellContext<T, unknown>) => ReactElement;
-    enableSorting: boolean;
-    enableHiding: boolean,
-}
+
 export function getSelectionCheckbox<T> (): ColumnDef<T> {
     const selectionCheckbox: ColumnDef<T> = {
         id: "select",
@@ -487,6 +484,7 @@ export function getActionsColumns<T> (): ColumnDef<T> {
     return {
         id: "actions",
         cell: ({ row }): ReactElement => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const anyRow: any = row as any
             return <TableActions rowId={anyRow.original.id!} />;
         },
