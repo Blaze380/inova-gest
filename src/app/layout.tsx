@@ -6,7 +6,7 @@ import { NextFontWithVariable } from "next/dist/compiled/@next/font";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
-const robotoLight:NextFontWithVariable = localFont({
+const robotoLight: NextFontWithVariable = localFont({
   src: "./fonts/Roboto-Light.ttf",
   variable: "--font-geist-mono",
   weight: "100 900",
@@ -17,25 +17,25 @@ export const metadata: Metadata = {
   description: "InovaGest é uma plataforma de gestão de imóveis para empresas. ",
 };
 
-export default function RootLayout({
+export default function RootLayout ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) :ReactElement{
+}>): ReactElement {
   return (
     <html lang="pt_PT">
       <body
-        className={`${robotoLight.variable} antialiased w-[100vw] h-[100vh]`}
+        className={`${ robotoLight.variable } antialiased w-[100vw] h-[100vh]  selection:text-fg-dark dark:selection:text-fg  selection:bg-bg-dark dark:selection:bg-bg `}
       >
-         <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-        {children}
-        <Toaster />
-          </ThemeProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );
