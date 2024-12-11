@@ -12,29 +12,42 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 import { ReactElement, useEffect, useState } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { items, DashItemsType, ItemType } from "@/lib/dashboard-utils";
 import { useTheme } from "next-themes";
-import { AuthError, isAuthError, User as Users } from "@supabase/supabase-js";
-import { Fetch } from "@/lib/utils";
+import { AuthError, isAuthError, UserResponse, User as Users } from "@supabase/supabase-js";
 import { SupabaseAuth } from "@/lib/supabase";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import { getUserData } from "./actions";
 
 export default function DashSidebar (): ReactElement {
   const [user, setUser] = useState<Users>();
   const router: AppRouterInstance = useRouter();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect((): void => { getIt() }, []);
 
-  async function getIt () {
-    setUser(await getUser(router));
+  async function getUserData (): Promise<void> {
+    const data = await getUser(router);
+    console.log(data)
+    setUser(data);
   }
+  useEffect((): void => {
+    getUserData()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   return (
     <Sidebar collapsible="icon" className="dark:bg-bg-dark dark:text-fg-dark">
@@ -44,33 +57,41 @@ export default function DashSidebar (): ReactElement {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        {items.map((group: DashItemsType): ReactElement => (
-          <SidebarGroup key={group.group}>
-            <SidebarGroupLabel className="text-base">{group.group}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {group.items.map((item: ItemType): ReactElement => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <Link href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+        <TooltipProvider>
+          {items.map((group: DashItemsType): ReactElement => (
+            <SidebarGroup key={group.group}>
+              <SidebarGroupLabel className="text-base">{group.group}</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {group.items.map((item: ItemType): ReactElement => (
+                    <SidebarMenuItem key={item.title}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SidebarMenuButton asChild>
+                            <Link href={item.url}>
+                              <item.icon />
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        </TooltipTrigger>
+                        <TooltipContent align="start" side="right">
+                          <p>{item.title}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
 
+        </TooltipProvider>
       </SidebarContent>
 
       <SidebarFooter className="flex items-center justify-start">
         <DropdownMenu >
           <DropdownMenuTrigger asChild >
-            <Button disabled={!user} variant="ghost" className="w-full  h-full p-2 ">
-
+            <Button disabled={!user} variant="ghost" className="w-full  h-full p-2 pl-0 ">
               <DashAvatar
                 email={user?.email}
                 name={user?.id}
@@ -110,8 +131,10 @@ interface DashAvatarProps {
   imgUrl?: string;
   isButton?: boolean
 }
-function DashAvatar ({ name, email, imgUrl = "https://github.com/shadcn.png", isButton = false }: DashAvatarProps): ReactElement {
-  if (!name || !email) return (
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function SuspendedDashAvatar (): ReactElement {
+  return (
     <div className="flex justify-between items-center w-full h-9">
       <div className="flex items-center w-[90%] space-x-1">
         <Skeleton className="rounded-md w-9 h-9" />
@@ -124,7 +147,9 @@ function DashAvatar ({ name, email, imgUrl = "https://github.com/shadcn.png", is
         <ChevronsUpDown />
       </div>
     </div>
-  )
+  );
+}
+function DashAvatar ({ name, email, imgUrl = "https://github.com/shadcn.png", isButton = false }: DashAvatarProps): ReactElement {
   return (
     <div className="flex justify-between items-center w-full h-9" >
       <div className="flex items-center w-[90%] space-x-1">
@@ -176,15 +201,19 @@ function ProfileContextMenu (): ReactElement {
 
 async function getUser (router: AppRouterInstance): Promise<Users> {
   const auth: SupabaseAuth = JSON.parse(localStorage.getItem("auth") as string) as SupabaseAuth;
-  const res: Response = await Fetch.getWithPathVariable("../api/v1/auth/users", auth.accessToken);
-  const data = await res.json();
-  if (isAuthError(data)) {
-    const error: AuthError = data;
+  const data: UserResponse = JSON.parse(await getUserData({ jwt: auth.accessToken })) as UserResponse;
+  if (isAuthError(data.error)) {
+    console.log("Is error")
+    const error: AuthError = data.error;
     if (error.code === "bad_jwt") {
-      router.push("../auth/signin");
+      router.replace("/auth/signin")
       return {} as Users;
     }
     console.log(data)
   }
-  return data.user;
+  if (data.data.user !== null) {
+    console.log(data.data.user)
+    return data.data.user;
+  }
+  throw new Error("Error on sidebar")
 }

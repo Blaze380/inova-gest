@@ -9,9 +9,9 @@ export interface SupabaseResponse {
   name: string | SupabaseErroName;
   status: 0;
 }
-export type SupabaseErroName = 'AuthRetryableFetchError' |"AuthApiError";
+export type SupabaseErroName = 'AuthRetryableFetchError' | "AuthApiError";
 
-
+export const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 export class Fetch {
   public static async post (url: string, data: unknown, token?: string): Promise<Response> {
     return await fetch(url, {
@@ -25,7 +25,7 @@ export class Fetch {
     });
   }
 
-  public static async getWithPathVariable (url: string,variable:string): Promise<Response> {
-    return await fetch(`${url}/${variable}`);
+  public static async getWithPathVariable (url: string, variable: string): Promise<Response> {
+    return await fetch(`${ url }/${ variable }`);
   }
 }

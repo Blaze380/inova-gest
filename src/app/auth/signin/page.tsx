@@ -102,9 +102,10 @@ export default function SignIn (): ReactElement {
     return (
         <div className="w-full h-full " onSubmit={(e) => e.preventDefault()}>
             <main className="w-full h-full border  flex justify-around items-center max-md:flex-col ">
-                <LabeledTitle
-                    title="Bem-vindo de volta a"
-                    description="Entre para gerenciar os imóveis da sua empresa!" />
+                <div className={`flex flex-col justify-start mb-4 space-y-3 text-center `}>
+                    <h2 className="text-3xl font-bold">Bem-vindo de volta a <span className="bg-bg-dark dark:bg-bg py-2 px-3 text-fg-dark dark:text-fg rounded-md">InovaGest</span></h2>
+                    <p className="text-smooth-fg dark:text-smooth-fg-dark">Entre para gerenciar os imóveis da sua empresa!</p>
+                </div>
                 <form className="p-6 w-96 shadow-md dark:border dark:border-smooth-fg dark:rounded-md" onSubmit={(e: FormEvent<HTMLFormElement>): Promise<void> => submitData(e)}>
                     <div className="flex flex-col items-center justify-center w-full space-y-5">
                         <LabeledTitle
