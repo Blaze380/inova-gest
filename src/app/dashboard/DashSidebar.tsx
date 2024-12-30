@@ -32,13 +32,14 @@ import { useRouter } from "next/navigation"
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { getUserData } from "./actions";
+import { useToast } from "@/hooks/use-toast";
 
 export default function DashSidebar (): ReactElement {
   const [user, setUser] = useState<Users>();
   const router: AppRouterInstance = useRouter();
-
+  const toast = useToast();
   async function getUserData (): Promise<void> {
-    const data = await getUser(router);
+    const data = await getUser(router,toast);
     console.log(data)
     setUser(data);
   }
@@ -199,7 +200,8 @@ function ProfileContextMenu (): ReactElement {
   );
 }
 
-async function getUser (router: AppRouterInstance): Promise<Users> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function getUser (router: AppRouterInstance,toast:any): Promise<Users> {
   const auth: SupabaseAuth = JSON.parse(localStorage.getItem("auth") as string) as SupabaseAuth;
   const data: UserResponse = JSON.parse(await getUserData({ jwt: auth.accessToken })) as UserResponse;
   if (isAuthError(data.error)) {
@@ -207,6 +209,14 @@ async function getUser (router: AppRouterInstance): Promise<Users> {
     const error: AuthError = data.error;
     if (error.code === "bad_jwt") {
       router.replace("/auth/signin")
+      return {} as Users;
+    }
+    if(error.name==="AuthRetryableFetchError"){
+      toast.toast({
+        title: "Erro de conexão",
+        variant: "destructive",
+        description: "Verifique a sua conexão.",
+      });
       return {} as Users;
     }
     console.log(data)

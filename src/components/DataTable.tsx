@@ -50,6 +50,7 @@ import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "./ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
@@ -113,13 +114,37 @@ export default function DataTable<TData, TValue> ({
                                     { inputType: "password", name: "Password" },
                                 ],
                                 [
-                                    { inputType: "radio", name: "Gender", defaultValue: "male" },
-                                    { inputType: "color", name: "Favorite Color", defaultValue: "#ff0000" },
+                                    { inputType: "range", name: "Gender", },
+                                    { inputType: "tel", name: "Favorite Color",  },
                                 ],
                                 [
                                     { inputType: "date", name: "Birthdate", defaultValue: "2000-01-01" },
                                     { inputType: "file", name: "Upload Document" },
                                 ],
+                                [
+                                    { inputType: "select", name: "Fruta", defaultValue: {
+                                        placeholder:"fruta",
+                                        items:[
+                                            {
+                                                key:"Tomate",
+                                                value:"tomato"
+
+                                            },
+                                            {
+                                                key:"Laranja",
+                                                value:"tomatasdo"
+
+                                            },
+                                            {
+                                                key:"Maçã",
+                                                value:"tomatko"
+
+                                            },
+                                        ]
+                                    } as DataDialogSelectProps},
+                                    { inputType: "url", name: "Uploadaaa Document" },
+                                ],
+                                
                             ]} />
                         </Dialog>
                     </div>
@@ -297,6 +322,8 @@ interface InputDialog {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     defaultValue?: any;
 }
+
+
 function DataDialog ({ isEdit, data }: DataDialogProps): ReactElement {
     const [currentTable] = useContext(CurrentTableContext);
     const title: string = isEdit ? "Editar " : "Criar Novo " + currentTable;
@@ -332,6 +359,10 @@ function DataDialog ({ isEdit, data }: DataDialogProps): ReactElement {
                                     <Label htmlFor="name" className="text-right">
                                         {input.name}
                                     </Label>
+
+                                    {input.inputType==="select"?(
+                                        <DataDialogSelect placeholder={input.defaultValue.placeholder} items={input.defaultValue.items}/>
+                                    ):(
                                     <Input
                                         id={input.name}
                                         type={input.inputType}
@@ -339,6 +370,7 @@ function DataDialog ({ isEdit, data }: DataDialogProps): ReactElement {
                                         onChange={(e: ChangeEvent<HTMLInputElement>): void => handleChange(i, j, e.target.value)}
                                         className="h-8 w-full"
                                     />
+                                    )}
                                 </div>
                             ))
                         }
@@ -351,6 +383,32 @@ function DataDialog ({ isEdit, data }: DataDialogProps): ReactElement {
             </DialogFooter>
         </DialogContent>
     );
+}
+
+interface DataDialogSelectProps {
+placeholder:string;
+items:SelectItems[];
+}
+interface SelectItems{
+    key:string;
+    value:string;
+}
+function DataDialogSelect ({items,placeholder}:DataDialogSelectProps): ReactElement {
+    console.log(items)
+    return (
+        <Select>
+            <SelectTrigger className="h-8 w-full">
+                <SelectValue placeholder={"Selecione "+placeholder} />
+            </SelectTrigger>
+            <SelectContent>
+                {items.map((item:SelectItems,i:number)=>(
+                    <SelectItem key={i} value={item.value}>{item.key}</SelectItem>
+                ))}
+                
+            </SelectContent>
+        </Select>
+
+    )
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
